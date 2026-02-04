@@ -54,7 +54,7 @@ public final class MainCanodromo {
                     int total = registry.getNextPosition() - 1;
 
                     can.winnerDialog(winner, total);
-                    System.out.println("El ganador fue: " + winner);
+                    System.out.println("The winner was: " + winner);
                 }, "race-orchestrator").start();
             }
         });
@@ -63,7 +63,7 @@ public final class MainCanodromo {
             @Override
             public void actionPerformed(ActionEvent e) {
                 control.pause();
-                System.out.println("Carrera pausada!");
+                System.out.println("Race paused!");
             }
         });
 
@@ -71,7 +71,7 @@ public final class MainCanodromo {
             @Override
             public void actionPerformed(ActionEvent e) {
                 control.resume();
-                System.out.println("Carrera reanudada!");
+                System.out.println("Race resumed!");
             }
         });
     }

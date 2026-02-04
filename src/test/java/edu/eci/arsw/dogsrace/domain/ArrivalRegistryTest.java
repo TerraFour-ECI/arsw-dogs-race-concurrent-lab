@@ -30,8 +30,8 @@ class ArrivalRegistryTest {
                 }))
                 .toList();
 
-        // Verificar que todas las tareas fueron encoladas antes de esperar a que
-        // comiencen.
+        // Verify that all tasks were queued before waiting for them
+        // to start.
         assertEquals(n, futures.size(), "All tasks must be submitted");
         assertTrue(ready.await(5, TimeUnit.SECONDS));
         start.countDown();

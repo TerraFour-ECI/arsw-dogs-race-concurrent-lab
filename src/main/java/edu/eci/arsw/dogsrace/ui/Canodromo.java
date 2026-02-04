@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 
 /**
- * Interfaz de usuario y modelo para un Canodromo
+ * User interface and model for a Greyhound Track
  * 
  * @author rlopez
  * 
@@ -26,7 +26,7 @@ public class Canodromo extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Carriles del canodromo
+	 * Lanes of the greyhound track
 	 */
 	private Carril[] carril;
 
@@ -37,9 +37,9 @@ public class Canodromo extends JFrame {
 	 * Constructor
 	 * 
 	 * @param nCarriles
-	 *            Numero de carriles
+	 *            Number of lanes
 	 * @param longPista
-	 *            Longitud de la pista
+	 *            Track length
 	 */
 	public Canodromo(int nCarriles, int longPista) {
 		carril = new Carril[nCarriles];
@@ -106,7 +106,7 @@ public class Canodromo extends JFrame {
 	}
 
 	/**
-	 * Reinicia cada uno de los carriles
+	 * Restarts each of the lanes
 	 */
 	public void restart() {
 		for (int i = 0; i < carril.length; i++) {
@@ -115,10 +115,10 @@ public class Canodromo extends JFrame {
 	}
 
 	/**
-	 * Retorna un carril
+	 * Returns a lane
 	 * 
 	 * @param i
-	 *            Numero del carril
+	 *            Lane number
 	 * @return
 	 */
 	public Carril getCarril(int i) {
@@ -130,7 +130,7 @@ public class Canodromo extends JFrame {
 	}
 
 	/**
-	 * Asocia una accion con el boton de start
+	 * Associates an action with the start button
 	 * 
 	 * @param action
 	 */
@@ -139,7 +139,7 @@ public class Canodromo extends JFrame {
 	}
 
 	/**
-	 * Asocia una accion con el boton de stop
+	 * Associates an action with the stop button
 	 * 
 	 * @param action
 	 */
@@ -148,7 +148,7 @@ public class Canodromo extends JFrame {
 	}
 
 	/**
-	 * Asocia una accion con el boton de continuar
+	 * Associates an action with the continue button
 	 * 
 	 * @param action
 	 */
@@ -157,6 +157,6 @@ public class Canodromo extends JFrame {
 	}
 	
 	public void winnerDialog(String winner,int total) {
-            JOptionPane.showMessageDialog(null, "El ganador fue:" + winner + " de un total de " + total);
+            JOptionPane.showMessageDialog(null, "The winner was: " + winner + " out of a total of " + total);
         }	
 }
