@@ -5,7 +5,7 @@ import java.awt.Color;
 import javax.swing.JButton;
 
 /**
- * Un carril del canodromo
+ * A lane of the greyhound track
  * 
  * @author rlopez
  * 
@@ -16,24 +16,24 @@ public class Carril {
 	private Color stop = Color.red;
 	private Color start = Color.GREEN;
 	/**
-	 * Pasos del carril
+	 * Steps of the lane
 	 */
 	private JButton[] paso;
 
 	/**
-	 * Bandera de llegada del carril
+	 * Finish flag of the lane
 	 */
 	private JButton llegada;
 
 	private String name;
 
 	/**
-	 * Construye un carril
+	 * Builds a lane
 	 * 
 	 * @param nPasos
-	 *            Numero de pasos del carril
+	 *            Number of steps in the lane
 	 * @param name
-	 *            Nombre del carril
+	 *            Name of the lane
 	 */
 	public Carril(int nPasos, String name) {
 		paso = new JButton[nPasos];
@@ -49,7 +49,7 @@ public class Carril {
 	}
 
 	/**
-	 * Tama��o del carril en numero de pasos
+	 * Lane size in number of steps
 	 * 
 	 * @return
 	 */
@@ -62,7 +62,7 @@ public class Carril {
 	}
 
 	/**
-	 * Retorna el i-esimo paso del carril
+	 * Returns the i-th step of the lane
 	 * 
 	 * @param i
 	 * @return
@@ -72,7 +72,7 @@ public class Carril {
 	}
 
 	/**
-	 * Retorna la bandera de llegada del carril
+	 * Returns the finish flag of the lane
 	 * 
 	 * @return
 	 */
@@ -81,7 +81,7 @@ public class Carril {
 	}
 
 	/**
-	 * Indica que el paso i ha sido utilizado
+	 * Indicates that step i has been used
 	 * 
 	 * @param i
 	 */
@@ -90,7 +90,7 @@ public class Carril {
 	}
 
 	/**
-	 * Indica que el paso i no ha sido utilizado
+	 * Indicates that step i has not been used
 	 * 
 	 * @param i
 	 */
@@ -99,7 +99,7 @@ public class Carril {
 	}
 
 	/**
-	 * Indica que se ha llegado al final del carril
+	 * Indicates that the end of the lane has been reached
 	 */
 	public void finish() {
 		llegada.setText("!");
@@ -110,7 +110,7 @@ public class Carril {
 	}
 
 	/**
-	 * Reinicia el carril: ningun paso se ha usado, la bandera abajo.
+	 * Restarts the lane: no step has been used, flag down.
 	 */
 	public void reStart() {
 		for (int k = 0; k < paso.length; k++) {
