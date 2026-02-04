@@ -1,40 +1,40 @@
-# 🐕 Laboratorio 2 – Programación Concurrente: Carrera de Galgos
+# 🐕 Lab 2 – Concurrent Programming: Greyhound Race
 
-## Arquitectura de Software (ARSW)
+## Software Architecture (ARSW)
 
-### Objetivo
-El objetivo de este laboratorio es que el estudiante **analice, corrija y diseñe una solución concurrente**, identificando **problemas de sincronización**, **regiones críticas** y aplicando **mecanismos adecuados de control de concurrencia** en Java.
+### Objective
+The objective of this lab is for the student to **analyze, fix, and design a concurrent solution**, identifying **synchronization problems**, **critical regions**, and applying **appropriate concurrency control mechanisms** in Java.
 
-El ejercicio se basa en una simulación de una **carrera de galgos**, donde cada galgo se ejecuta como un hilo independiente y avanza por un carril hasta completar la pista.
-
----
-
-## Contexto del problema
-En la simulación:
-
-- Cada **galgo** corre de manera concurrente (un hilo por galgo).
-- Todos los galgos comparten un **registro de llegada**.
-- El sistema permite **iniciar**, **detener** y **reanudar** la carrera.
-- Al finalizar la carrera, se debe mostrar el **orden de llegada (ranking)** de forma consistente.
-
-La aplicación presenta inicialmente **problemas de sincronización** que deben ser analizados y corregidos.
+The exercise is based on a simulation of a **greyhound race**, where each greyhound runs as an independent thread and advances through a lane until completing the track.
 
 ---
 
-## Estructura general del proyecto
+## Problem Context
+In the simulation:
 
-El proyecto sigue una **separación por capas**, consistente con el laboratorio anterior:
+- Each **greyhound** runs concurrently (one thread per greyhound).
+- All greyhounds share an **arrival registry**.
+- The system allows **starting**, **stopping**, and **resuming** the race.
+- At the end of the race, the **arrival order (ranking)** must be displayed consistently.
+
+The application initially presents **synchronization problems** that must be analyzed and fixed.
+
+---
+
+## General Project Structure
+
+The project follows a **layer separation**, consistent with the previous lab:
 
 ```
 src
  ├── main
  │   └── java
  │       └── edu.eci.arsw.dogsrace
- │           ├── app        -> Punto de entrada y orquestación
- │           ├── threads    -> Hilos de ejecución (galgos)
- │           ├── control    -> Control de la ejecución concurrente
- │           ├── domain     -> Modelo y estado compartido
- │           └── ui         -> Interfaz gráfica
+ │           ├── app        -> Entry point and orchestration
+ │           ├── threads    -> Execution threads (greyhounds)
+ │           ├── control    -> Concurrent execution control
+ │           ├── domain     -> Model and shared state
+ │           └── ui         -> Graphical interface
  └── test
      └── java
          └── edu.eci.arsw.dogsrace
@@ -42,59 +42,59 @@ src
 
 ---
 
-## Actividades a desarrollar
+## Activities to Develop
 
-### 1️⃣ Sincronización de finalización de hilos
-Corrija la aplicación para que el aviso de resultados se muestre **únicamente cuando todos los hilos de los galgos hayan finalizado su ejecución**.
+### 1️⃣ Thread Completion Synchronization
+Fix the application so that the results notification is displayed **only when all greyhound threads have finished their execution**.
 
-**Pistas:**
-- La acción de iniciar la carrera y mostrar resultados se realiza desde `MainCanodromo`.
-- Puede utilizar el método `join()` de la clase `Thread`.
-
----
-
-### 2️⃣ Identificación de inconsistencias y regiones críticas
-Ejecute la aplicación varias veces e identifique **inconsistencias en el ranking**.
-
-**Tareas:**
-- Identificar las regiones críticas.
-- Explicar por qué generan inconsistencias.
-- Sincronizar únicamente dichas regiones.
+**Hints:**
+- The action to start the race and display results is performed from `MainCanodromo`.
+- You can use the `join()` method of the `Thread` class.
 
 ---
 
-### 3️⃣ Funcionalidades de pausa y continuación
-Implemente las funcionalidades **Stop** y **Continue**.
+### 2️⃣ Identification of Inconsistencies and Critical Regions
+Run the application multiple times and identify **inconsistencies in the ranking**.
 
-**Comportamiento esperado:**
-- **Stop**: todos los galgos suspenden su ejecución.
-- **Continue**: todos los galgos reanudan la carrera.
-
-**Restricciones:**
-- Usar mecanismos de sincronización del lenguaje.
-- Utilizar un **monitor común**.
-- Emplear `wait()` y `notifyAll()`.
+**Tasks:**
+- Identify the critical regions.
+- Explain why they generate inconsistencies.
+- Synchronize only those regions.
 
 ---
 
-## Criterios de evaluación
+### 3️⃣ Pause and Continue Functionalities
+Implement the **Stop** and **Continue** functionalities.
 
-### Funcionalidad
-- Ejecución detenida y reanudada consistentemente.
-- Ranking sin inconsistencias.
+**Expected behavior:**
+- **Stop**: all greyhounds suspend their execution.
+- **Continue**: all greyhounds resume the race.
 
-### Diseño
-- Sincronización solo de regiones críticas.
-- Reactivación con un único llamado usando un monitor común.
-
----
-
-## Entregables
-- Código fuente funcional.
-- Explicación breve de las regiones críticas y sincronización usada.
-- Evidencia de ejecución correcta.
+**Restrictions:**
+- Use language synchronization mechanisms.
+- Use a **common monitor**.
+- Use `wait()` and `notifyAll()`.
 
 ---
 
-## Observaciones finales
-Este laboratorio refuerza conceptos clave de **programación concurrente**, **diseño correcto de sincronización** y **arquitectura por capas**, que serán reutilizados en laboratorios posteriores.
+## Evaluation Criteria
+
+### Functionality
+- Execution stopped and resumed consistently.
+- Ranking without inconsistencies.
+
+### Design
+- Synchronization only of critical regions.
+- Reactivation with a single call using a common monitor.
+
+---
+
+## Deliverables
+- Functional source code.
+- Brief explanation of the critical regions and synchronization used.
+- Evidence of correct execution.
+
+---
+
+## Final Remarks
+This lab reinforces key concepts of **concurrent programming**, **correct synchronization design**, and **layered architecture**, which will be reused in subsequent labs.
