@@ -9,10 +9,17 @@
   <name>Dogs Race (Java 21)</name>
 
   <properties>
+    <java.version>21</java.version>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>5.10.2</junit.version>
     <jacoco.version>0.8.12</jacoco.version>
+    <!-- SonarCloud properties -->
+    <sonar.organization>terrafour-eci</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.projectKey>TerraFour-ECI_arsw-dogs-race-concurrent-lab</sonar.projectKey>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencies>
