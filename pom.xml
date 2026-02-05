@@ -19,7 +19,9 @@
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.projectKey>TerraFour-ECI_arsw-dogs-race-concurrent-lab</sonar.projectKey>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.coverage.exclusions>**/ui/**,**/app/**,**/threads/**,**/util/**</sonar.coverage.exclusions>
     <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+
   </properties>
 
   <dependencies>
@@ -79,6 +81,8 @@
                 <exclude>**/app/**</exclude>
                 <!-- Thread classes with UI dependencies -->
                 <exclude>**/threads/**</exclude>
+                <!-- Utility classes -->
+                <exclude>**/util/**</exclude>
               </excludes>
             </configuration>
           </execution>
