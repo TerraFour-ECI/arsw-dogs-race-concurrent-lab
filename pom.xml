@@ -57,7 +57,16 @@
             <id>report</id>
             <phase>test</phase>
             <goals><goal>report</goal></goals>
+            <configuration>
+              <excludes>
+                <exclude>**/ui/**</exclude>
+                <exclude>**/app/**</exclude>
+                <exclude>**/threads/**</exclude>
+                <exclude>**/util/**</exclude>
+              </excludes>
+            </configuration>
           </execution>
+
           <execution>
             <id>check</id>
             <goals><goal>check</goal></goals>
@@ -69,7 +78,7 @@
                     <limit>
                       <counter>INSTRUCTION</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.30</minimum>
+                      <minimum>0.80</minimum>
                     </limit>
                   </limits>
                 </rule>
