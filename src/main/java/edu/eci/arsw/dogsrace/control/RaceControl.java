@@ -10,12 +10,18 @@ public final class RaceControl {
     private final Object monitor = new Object();
     private boolean paused = false;
 
+    /**
+     * Pauses the race. All threads will suspend on next awaitIfPaused() call.
+     */
     public void pause() {
         synchronized (monitor) {
             paused = true;
         }
     }
 
+    /**
+     * Resumes the race and wakes up all waiting threads.
+     */
     public void resume() {
         synchronized (monitor) {
             paused = false;
@@ -23,6 +29,9 @@ public final class RaceControl {
         }
     }
 
+    /**
+     * @return true if the race is currently paused.
+     */
     public boolean isPaused() {
         synchronized (monitor) {
             return paused;
