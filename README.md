@@ -51,7 +51,34 @@ Fix the application so that the results notification is displayed **only when al
 - The action to start the race and display results is performed from `MainCanodromo`.
 - You can use the `join()` method of the `Thread` class.
 
+### 🛠️**Solution**
+
+#### *Problem*
+The application was displaying results **before all greyhound threads had finished execution**, causing incomplete or incorrect rankings to be shown prematurely.
+
+#### *Root Cause*
+The main orchestration logic in `MainCanodromo` was calling the results display immediately after initiating all greyhound threads, without establishing a synchronization mechanism to ensure all concurrent executions had completed.
+
+#### *Solution Implemented*
+We integrated the **`join()` method** from the Java threading API to enforce **thread-level synchronization**:
+
+**Key Implementation Details:**
+
+- **In `MainCanodromo.java`**: After starting all greyhound threads, we added an explicit **join synchronization phase** where the main thread waits for each greyhound thread to complete.
+- **How it works**: The `join()` method blocks the main thread's execution until the associated greyhound thread finishes its run, ensuring a **happens-before relationship** between thread completion and result display.
+- **Sequential guarantee**: Only after all greyhounds have completed their concurrent execution does the application proceed to calculate and display the final ranking.
+
+#### *Why This Works*
+The `join()` method provides an **implicit mutual exclusion** at the thread orchestration level by forcing the main thread to synchronize with worker threads, preventing any premature result computation while races are still ongoing.
+
+#### *Result*
+
+>**Consistent and reliable ranking display**: Results are now guaranteed to show the correct final positions of all greyhounds without race condition artifacts.
+
+
 ---
+
+
 
 ### 2️⃣ Identification of Inconsistencies and Critical Regions
 Run the application multiple times and identify **inconsistencies in the ranking**.
@@ -74,6 +101,20 @@ Implement the **Stop** and **Continue** functionalities.
 - Use language synchronization mechanisms.
 - Use a **common monitor**.
 - Use `wait()` and `notifyAll()`.
+
+---
+
+### ✅ Test Results
+
+
+![All tests passed](images/test.png)
+
+---
+
+### 📊 JaCoCo Coverage Analysis
+
+
+![JaCoCo Coverage Report](images/jacoco.png)
 
 ---
 
