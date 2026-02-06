@@ -1,0 +1,27 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Objective}{3}{section.1}%
+\contentsline {section}{\numberline {2}Problem Description}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Application Architecture}{3}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Theoretical Framework}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Thread Synchronization with join()}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Critical Regions and Synchronized}{3}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Wait/Notify Pattern}{3}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Implementation}{4}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Solution 1: Thread Completion with join()}{4}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Solution 2: Critical Region Protection}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Solution 3: Pause/Continue Synchronization}{4}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Experiments and Results}{4}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Race Execution Evidence}{4}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Final Results Display}{5}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Testing and Coverage}{6}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Synchronization Flow}{6}{section.6}%
+\contentsline {section}{\numberline {7}Analysis}{6}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Correctness Verification}{6}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Thread Safety Analysis}{6}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Performance Considerations}{6}{subsection.7.3}%
+\contentsline {section}{\numberline {8}Methodology}{6}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Test Environment}{6}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Testing Strategy}{6}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Conclusions}{7}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Lessons Learned}{7}{subsection.9.1}%
+\contentsline {section}{\numberline {10}References}{7}{section.10}%
