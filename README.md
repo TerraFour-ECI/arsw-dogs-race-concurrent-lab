@@ -92,19 +92,19 @@ Run the application multiple times and identify **inconsistencies in the ranking
 
 #### Race condition observed
 
-When running the program **Without synchronization**, the followinig issues occur when multiple dogs finish simultaneously:
+When running the program **without synchronization**, the following issues occur when multiple dogs finish simultaneously:
 1. **Duplicate positions**: Multiple dogs receive the same finishing position (e.g., two dogs both get position 2)
-2. **Incorrect winner**: THe dog declared as winner might not be the actual first finisher
+2. **Incorrect winner**: The dog declared as winner might not be the actual first finisher
 3. **Lost position updates**: The final count of positions doesn't match the number of dogs
 
 ### Why this happens
-The root cause is the **non-atomi increment** operation in `ArrivalRegistry.registerArrival()`:
+The root cause is the **non-atomic increment** operation in `ArrivalRegistry.registerArrival()`:
 
 ```java
-this.position++;  // This is actually 3 operations:
-                  // 1. Read position
-                  // 2. Add 1
-                  // 3. Write back
+int position = nextPosition++;  // This is actually 3 operations:
+                                // 1. Read nextPosition
+                                // 2. Add 1
+                                // 3. Write back
 ```
 
 When multiple threads execute this simultaneously, they can:
@@ -114,10 +114,10 @@ When multiple threads execute this simultaneously, they can:
 
 **Example Timeline:**
 ```
-Thread A reads position=5
-Thread B reads position=5
-Thread A writes position=6
-Thread B writes position=6  ← Lost update! Should be 7
+Thread A reads nextPosition=5
+Thread B reads nextPosition=5
+Thread A writes nextPosition=6
+Thread B writes nextPosition=6  ← Lost update! Should be 7
 ```
 
 ---
@@ -128,23 +128,20 @@ The critical region is in `ArrivalRegistry.registerArrival()`:
 
 ```java
 // CRITICAL REGION - Must be atomic
-this.position++;                    // Shared state: position counter
-int finalPosition = this.position;  // Reading shared state
-if (winner == null) {               // Shared state: winner
-    winner = dogName;               // Writing shared state
+int position = nextPosition++;  // Shared state: position counter
+if (winner == null) {           // Shared state: winner
+    winner = dogName;           // Writing shared state
 }
 ```
 
-
 **Why is this critical?**
 - Multiple `Galgo` threads call this method concurrently (all dogs finish around the same time)
-- All threads access the **same shared variables** (`position`, `winner`)
+- All threads access the **same shared variables** (`nextPosition`, `winner`)
 - Operations involve **read-modify-write** sequences that must be atomic
 
 **What is NOT critical?**
 - The race execution in `Galgo.run()` - each dog runs independently
-- Reading the final results in `getArrivals()` - happens after all threads finish
-- Adding to the `arrivals` list if it's a synchronized collection
+- Reading the final results in `getWinner()`/`getLastPosition()` - happens after all threads finish
 
 ---
 
@@ -154,15 +151,14 @@ if (winner == null) {               // Shared state: winner
 Synchronized the **entire** `registerArrival()` method:
 
 ```java
-public synchronized void registerArrival(int dogNumber, String dogName) {
-    this.position++;
-    int finalPosition = this.position;
+public synchronized int registerArrival(String dogName) {
+    int position = nextPosition++;
     
     if (winner == null) {
         winner = dogName;
     }
     
-    arrivals.add(new ArrivalSnapshot(dogNumber, dogName, finalPosition, Instant.now()));
+    return position;
 }
 ```
 
@@ -176,17 +172,15 @@ public synchronized void registerArrival(int dogNumber, String dogName) {
 Could use `synchronized` blocks instead:
 
 ```java
-public void registerArrival(int dogNumber, String dogName) {
-    int finalPosition;
+public int registerArrival(String dogName) {
+    int position;
     synchronized(this) {
-        this.position++;
-        finalPosition = this.position;
+        position = nextPosition++;
         if (winner == null) {
             winner = dogName;
         }
     }
-    // List addition outside lock (if using ConcurrentList)
-    arrivals.add(...);
+    return position;
 }
 ```
 
@@ -208,7 +202,6 @@ public void registerArrival(int dogNumber, String dogName) {
 - `ArrivalRegistry` is now thread-safe
 - Can be safely called by multiple threads simultaneously
 - Maintains correct state even under high concurrency
-
 ---
 
 3️⃣ Pause and Continue Functionalities
