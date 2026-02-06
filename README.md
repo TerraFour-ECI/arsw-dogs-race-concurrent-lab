@@ -88,9 +88,130 @@ Run the application multiple times and identify **inconsistencies in the ranking
 - Explain why they generate inconsistencies.
 - Synchronize only those regions.
 
+### Problem Identification
+
+#### Race condition observed
+
+When running the program **Without synchronization**, the followinig issues occur when multiple dogs finish simultaneously:
+1. **Duplicate positions**: Multiple dogs receive the same finishing position (e.g., two dogs both get position 2)
+2. **Incorrect winner**: THe dog declared as winner might not be the actual first finisher
+3. **Lost position updates**: The final count of positions doesn't match the number of dogs
+
+### Why this happens
+The root cause is the **non-atomi increment** operation in `ArrivalRegistry.registerArrival()`:
+
+```java
+this.position++;  // This is actually 3 operations:
+                  // 1. Read position
+                  // 2. Add 1
+                  // 3. Write back
+```
+
+When multiple threads execute this simultaneously, they can:
+- Read the same value
+- Increment independently  
+- Overwrite each other's results
+
+**Example Timeline:**
+```
+Thread A reads position=5
+Thread B reads position=5
+Thread A writes position=6
+Thread B writes position=6  ← Lost update! Should be 7
+```
+
 ---
 
-### 3️⃣ Pause and Continue Functionalities
+### Critical Regions Identified
+
+The critical region is in `ArrivalRegistry.registerArrival()`:
+
+```java
+// CRITICAL REGION - Must be atomic
+this.position++;                    // Shared state: position counter
+int finalPosition = this.position;  // Reading shared state
+if (winner == null) {               // Shared state: winner
+    winner = dogName;               // Writing shared state
+}
+```
+
+
+**Why is this critical?**
+- Multiple `Galgo` threads call this method concurrently (all dogs finish around the same time)
+- All threads access the **same shared variables** (`position`, `winner`)
+- Operations involve **read-modify-write** sequences that must be atomic
+
+**What is NOT critical?**
+- The race execution in `Galgo.run()` - each dog runs independently
+- Reading the final results in `getArrivals()` - happens after all threads finish
+- Adding to the `arrivals` list if it's a synchronized collection
+
+---
+
+### Synchronization Strategy
+
+#### Solution Implemented
+Synchronized the **entire** `registerArrival()` method:
+
+```java
+public synchronized void registerArrival(int dogNumber, String dogName) {
+    this.position++;
+    int finalPosition = this.position;
+    
+    if (winner == null) {
+        winner = dogName;
+    }
+    
+    arrivals.add(new ArrivalSnapshot(dogNumber, dogName, finalPosition, Instant.now()));
+}
+```
+
+#### Why This Approach?
+- **Mutex on `this`**: Uses the `ArrivalRegistry` instance as the lock
+- **Minimal scope**: Only the arrival registration is synchronized, not the entire race
+- **Correct granularity**: Each arrival registration is atomic, preventing interleaving
+- **No deadlocks**: Single lock, acquired and released immediately
+
+#### Alternative Considered
+Could use `synchronized` blocks instead:
+
+```java
+public void registerArrival(int dogNumber, String dogName) {
+    int finalPosition;
+    synchronized(this) {
+        this.position++;
+        finalPosition = this.position;
+        if (winner == null) {
+            winner = dogName;
+        }
+    }
+    // List addition outside lock (if using ConcurrentList)
+    arrivals.add(...);
+}
+```
+
+---
+
+### Results After Synchronization
+
+✅ **Fixed Issues:**
+- Each dog receives a **unique, sequential position** (1, 2, 3, ..., 17)
+- The **winner is always the first actual finisher**
+- No lost updates or race conditions in arrival registration
+
+✅ **Performance:**
+- Minimal impact: Lock is held only during position assignment (~microseconds)
+- Race execution itself remains fully concurrent
+- No contention during the race, only at finish line
+
+✅ **Thread Safety:**
+- `ArrivalRegistry` is now thread-safe
+- Can be safely called by multiple threads simultaneously
+- Maintains correct state even under high concurrency
+
+---
+
+3️⃣ Pause and Continue Functionalities
 Implement the **Stop** and **Continue** functionalities.
 
 **Expected behavior:**
