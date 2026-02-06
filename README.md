@@ -2,6 +2,8 @@
 
 ## Software Architecture (ARSW)
 
+📄 **[View Full Lab Report (PDF)](report/main.pdf)**
+
 ### Objective
 The objective of this lab is for the student to **analyze, fix, and design a concurrent solution**, identifying **synchronization problems**, **critical regions**, and applying **appropriate concurrency control mechanisms** in Java.
 
