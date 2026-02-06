@@ -102,6 +102,40 @@ Implement the **Stop** and **Continue** functionalities.
 - Use a **common monitor**.
 - Use `wait()` and `notifyAll()`.
 
+
+### 🛠️**Solution**
+
+#### *Problem*
+The application needed the ability to pause and resume the race dynamically during execution, allowing all greyhound threads to suspend simultaneously and then continue running from where they left off, without losing their progress or causing inconsistencies.
+
+#### *Root Cause*
+The initial design lacked a centralized mechanism to coordinate the execution state of multiple concurrent threads, making it impossible to pause and resume all greyhounds in a synchronized manner.
+
+#### *Solution Implemented*
+We implemented a **common monitor pattern** using the `RaceControl` class as a centralized synchronization point:
+
+**Key Implementation Details:**
+
+- **In `RaceControl.java`**: Created a shared monitor object that manages the paused state using proper synchronization primitives:
+  - **`pause()` method**: Sets a boolean flag to `true` within a synchronized block, signaling all threads to suspend.
+  - **`resume()` method**: Sets the flag to `false` and calls `notifyAll()` to wake up all waiting threads.
+  - **`awaitIfPaused()` method**: Uses a `while` loop with `wait()` to suspend threads when paused, preventing spurious wakeups.
+
+- **In `Galgo.java`**: Each greyhound calls `control.awaitIfPaused()` at the beginning of each iteration in its run loop, creating a **synchronization checkpoint** that checks the race state before proceeding.
+
+- **In `MainCanodromo.java`**: The Stop and Continue button action listeners simply invoke `control.pause()` and `control.resume()` respectively, providing a clean interface to control the race.
+
+#### *Why This Works*
+The **monitor pattern with `wait()/notifyAll()`** provides a robust mechanism for thread coordination:
+- All greyhounds share the same monitor object, ensuring consistent state visibility.
+- The `while` loop in `awaitIfPaused()` prevents race conditions by re-checking the condition after waking up.
+- `notifyAll()` ensures that all waiting threads are awakened simultaneously when the race resumes.
+- The synchronized blocks guarantee **mutual exclusion** and proper **memory visibility** across threads.
+
+#### *Result*
+
+>**Coordinated pause/resume behavior**: All greyhounds now suspend and resume execution simultaneously without losing race progress or causing thread safety issues, providing smooth and consistent race control.
+
 ---
 
 ### ✅ Test Results
