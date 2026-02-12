@@ -3,6 +3,7 @@ package edu.eci.arsw.dogsrace.threads;
 import edu.eci.arsw.dogsrace.control.RaceControl;
 import edu.eci.arsw.dogsrace.domain.ArrivalRegistry;
 import edu.eci.arsw.dogsrace.ui.Carril;
+import edu.eci.arsw.dogsrace.util.RandomGenerator;
 
 /**
  * A runner (greyhound) in the race.
@@ -21,6 +22,11 @@ public class Galgo extends Thread {
     private int paso = 0;
     /** True if this greyhound was stopped early by the threshold. */
     private volatile boolean stoppedEarly = false;
+
+    /** Min delay per step in ms. */
+    private static final int MIN_STEP_DELAY = 50;
+    /** Max additional delay per step in ms (total = MIN + [0, MAX_EXTRA)). */
+    private static final int MAX_EXTRA_DELAY = 100;
 
     public Galgo(Carril carril, String name, ArrivalRegistry registry, RaceControl control) {
         super(name);
@@ -44,7 +50,10 @@ public class Galgo extends Thread {
                 break;
             }
 
-            Thread.sleep(100);
+            // Random delay per step so greyhounds run at different speeds.
+            // This makes the early-stop observable: fast dogs finish first,
+            // slower dogs are still mid-track when the threshold is reached.
+            Thread.sleep(MIN_STEP_DELAY + RandomGenerator.nextInt(MAX_EXTRA_DELAY));
             carril.setPasoOn(paso++);
             carril.displayPasos(paso);
 
