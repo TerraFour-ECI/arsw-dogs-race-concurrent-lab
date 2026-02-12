@@ -6,6 +6,11 @@ import edu.eci.arsw.dogsrace.ui.Carril;
 
 /**
  * A runner (greyhound) in the race.
+ * <p>
+ * Implements the <b>distributed search / early-stop</b> pattern: each
+ * greyhound checks {@link ArrivalRegistry#hasReachedThreshold()} every
+ * iteration and terminates early when the threshold of arrivals has been
+ * reached, instead of traversing all remaining steps.
  */
 public class Galgo extends Thread {
 
@@ -14,6 +19,8 @@ public class Galgo extends Thread {
     private final RaceControl control;
 
     private int paso = 0;
+    /** True if this greyhound was stopped early by the threshold. */
+    private volatile boolean stoppedEarly = false;
 
     public Galgo(Carril carril, String name, ArrivalRegistry registry, RaceControl control) {
         super(name);
@@ -26,6 +33,17 @@ public class Galgo extends Thread {
         while (paso < carril.size()) {
             control.awaitIfPaused();
 
+            // --- Early-stop condition (distributed search pattern) ---
+            // Check the shared AtomicInteger counter each iteration:
+            // if enough arrivals have been registered, this thread
+            // terminates early without traversing remaining steps.
+            if (registry.hasReachedThreshold()) {
+                stoppedEarly = true;
+                System.out.printf("Greyhound %s stopped early at step %d/%d (threshold reached)%n",
+                        getName(), paso, carril.size());
+                break;
+            }
+
             Thread.sleep(100);
             carril.setPasoOn(paso++);
             carril.displayPasos(paso);
@@ -36,6 +54,14 @@ public class Galgo extends Thread {
                 System.out.printf("Greyhound %s arrived in position %d%n", getName(), snapshot.position());
             }
         }
+    }
+
+    /**
+     * @return true if this greyhound was stopped before finishing the track
+     *         because the arrival threshold was reached.
+     */
+    public boolean wasStoppedEarly() {
+        return stoppedEarly;
     }
 
     @Override
