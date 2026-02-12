@@ -11,6 +11,11 @@ import java.awt.event.ActionListener;
 
 /**
  * Entry point (UI + orchestration).
+ * <p>
+ * Supports an <b>arrival threshold</b> via the system property
+ * {@code -Dthreshold=N}.  When set, once N greyhounds arrive all remaining
+ * threads terminate early (distributed-search stop condition).
+ * Default: no threshold (all greyhounds finish the race).
  *
  * NOTE: the start action runs in a separate thread so the Swing UI thread is not blocked.
  */
@@ -19,7 +24,11 @@ public final class MainCanodromo {
     private static Galgo[] galgos;
     private static Canodromo can;
 
-    private static final ArrivalRegistry registry = new ArrivalRegistry();
+    /** Threshold read from -Dthreshold (0 or absent = no early stop). */
+    private static final int THRESHOLD = Integer.getInteger("threshold", 0);
+
+    private static final ArrivalRegistry registry =
+            THRESHOLD > 0 ? new ArrivalRegistry(THRESHOLD) : new ArrivalRegistry();
     private static final RaceControl control = new RaceControl();
 
     public static void main(String[] args) {
@@ -51,9 +60,26 @@ public final class MainCanodromo {
 
                     // 3) show results ONLY after all threads finished
                     String winner = registry.getWinner();
-                    int total = registry.getNextPosition() - 1;
+                    int totalFinished = registry.getNextPosition() - 1;
+                    int totalRunners = galgos.length;
 
-                    can.winnerDialog(winner, total);
+                    // Count how many were stopped early by the threshold
+                    int stoppedEarly = 0;
+                    for (Galgo g : galgos) {
+                        if (g.wasStoppedEarly()) stoppedEarly++;
+                    }
+
+                    if (THRESHOLD > 0) {
+                        System.out.printf(
+                                "=== Early-stop active (threshold=%d) ===%n"
+                              + "  Arrivals: %d / %d runners%n"
+                              + "  Stopped early: %d greyhounds%n"
+                              + "  Winner: %s%n",
+                                THRESHOLD, totalFinished, totalRunners,
+                                stoppedEarly, winner);
+                    }
+
+                    can.winnerDialog(winner, totalFinished);
                     System.out.println("The winner was: " + winner);
                 }, "race-orchestrator").start();
             }
