@@ -53,7 +53,7 @@ public class Galgo extends Thread {
             // Random delay per step so greyhounds run at different speeds.
             // This makes the early-stop observable: fast dogs finish first,
             // slower dogs are still mid-track when the threshold is reached.
-            Thread.sleep(MIN_STEP_DELAY + RandomGenerator.nextInt(MAX_EXTRA_DELAY));
+            Thread.sleep((long) MIN_STEP_DELAY + RandomGenerator.nextInt(MAX_EXTRA_DELAY));
             carril.setPasoOn(paso++);
             carril.displayPasos(paso);
 
