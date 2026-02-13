@@ -27,6 +27,7 @@ public final class ArrivalRegistry {
     private String winner = null;
 
     /**
+<<<<<<< HEAD
      * Creates a registry with no early-stop threshold (all runners finish).
      */
     public ArrivalRegistry() {
@@ -43,11 +44,26 @@ public final class ArrivalRegistry {
     public ArrivalRegistry(int arrivalAlarmCount) {
         if (arrivalAlarmCount < 1) {
             throw new IllegalArgumentException("arrivalAlarmCount must be >= 1");
+=======
+     * Registers a greyhound's arrival and assigns its position.
+     * The first arrival is recorded as the winner.
+     * 
+     * @param dogName the name of the arriving greyhound.
+     * @return snapshot containing the assigned position and current winner.
+     * @throws NullPointerException if dogName is null.
+     */
+    public synchronized ArrivalSnapshot registerArrival(String dogName) {
+        Objects.requireNonNull(dogName, "dogName");
+        final int position = nextPosition++;
+        if (position == 1) {
+            winner = dogName;
+>>>>>>> main
         }
         this.arrivalAlarmCount = arrivalAlarmCount;
     }
 
     /**
+<<<<<<< HEAD
      * Registers a greyhound's arrival and assigns its position.
      * The first arrival is recorded as the winner.
      * <p>
@@ -120,6 +136,26 @@ public final class ArrivalRegistry {
      *
      * @param position the assigned position.
      * @param winner   the current race winner.
+=======
+     * @return the next position to be assigned.
+     */
+    public synchronized int getNextPosition() {
+        return nextPosition;
+    }
+
+    /**
+     * @return the name of the winning greyhound, or null if no arrivals yet.
+     */
+    public synchronized String getWinner() {
+        return winner;
+    }
+
+    /**
+     * Immutable snapshot of arrival information.
+     * 
+     * @param position the assigned position.
+     * @param winner the current race winner.
+>>>>>>> main
      */
     public record ArrivalSnapshot(int position, String winner) { }
 }
